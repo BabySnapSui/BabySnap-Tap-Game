@@ -1,89 +1,508 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Baby Snap Tap Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baby Snap Tap Game</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #10204d 0%, #07122d 55%, #030914 100%);
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-<style>
-body{
-background:#0f172a;
-color:white;
-font-family:Arial;
-text-align:center;
-padding:20px;
-}
+    .wrap {
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+      position: relative;
+    }
 
-#snap{
-width:250px;
-cursor:pointer;
-}
+    h1 {
+      margin: 12px 0 8px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
 
-.stat{
-font-size:22px;
-margin:10px;
-}
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 14px 0 10px;
+    }
 
-button{
-padding:10px 16px;
-border:none;
-border-radius:10px;
-margin:8px;
-font-size:16px;
-}
-</style>
+    .card {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 12px 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .label {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .value {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .combo-box {
+      margin: 12px 0 16px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .combo-text {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #38bdf8, #22d3ee, #8b5cf6);
+      border-radius: 999px;
+      transition: width 0.18s linear;
+      box-shadow: 0 0 14px rgba(56,189,248,0.6);
+    }
+
+    #gameArea {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      margin: 22px auto 10px;
+      min-height: 320px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #snapWrap {
+      position: relative;
+      display: inline-block;
+      border-radius: 50%;
+      transition: transform 0.08s ease;
+      filter: drop-shadow(0 10px 25px rgba(0,0,0,0.28));
+    }
+
+    #snapWrap.glow {
+      animation: pulseGlow 0.22s ease;
+    }
+
+    #snap {
+      width: 300px;
+      max-width: 78vw;
+      user-select: none;
+      -webkit-user-drag: none;
+      cursor: pointer;
+      display: block;
+    }
+
+    #snap.tap {
+      transform: scale(0.93) rotate(-2deg);
+    }
+
+    #snap.crit {
+      animation: critFlash 0.25s ease;
+    }
+
+    .float-text {
+      position: absolute;
+      pointer-events: none;
+      font-weight: 900;
+      font-size: 28px;
+      text-shadow: 0 0 14px rgba(255,255,255,0.45);
+      animation: floatUp 0.85s ease-out forwards;
+      white-space: nowrap;
+    }
+
+    .float-normal {
+      color: #7dd3fc;
+    }
+
+    .float-crit {
+      color: #fde047;
+      font-size: 34px;
+      text-shadow: 0 0 16px rgba(253,224,71,0.9);
+    }
+
+    .float-bonus {
+      color: #86efac;
+      font-size: 30px;
+    }
+
+    .milestone {
+      margin: 14px auto 8px;
+      min-height: 28px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #facc15;
+      text-shadow: 0 0 18px rgba(250,204,21,0.35);
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(180deg, #ffffff, #dbeafe);
+      color: #0f172a;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .shake {
+      animation: shake 0.18s linear;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.9);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-72px) scale(1.25);
+      }
+    }
+
+    @keyframes pulseGlow {
+      0% { filter: drop-shadow(0 0 0 rgba(56,189,248,0)); }
+      50% { filter: drop-shadow(0 0 26px rgba(56,189,248,0.9)); }
+      100% { filter: drop-shadow(0 0 0 rgba(56,189,248,0)); }
+    }
+
+    @keyframes critFlash {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.08) rotate(2deg); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-3px); }
+      100% { transform: translateX(0); }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap" id="screen">
+    <h1>Baby Snap Tap Game</h1>
 
-<h1>Baby Snap Tap Game</h1>
+    <div class="topbar">
+      <div class="card">
+        <div class="label">Score</div>
+        <div class="value" id="score">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Energy</div>
+        <div class="value" id="energy">100</div>
+      </div>
+    </div>
 
-<div class="stat" id="score">Score: 0</div>
-<div class="stat" id="energy">Energy: 100</div>
+    <div class="combo-box">
+      <div class="combo-text" id="comboText">Combo x1 • Streak 0</div>
+      <div class="bar">
+        <div class="bar-fill" id="energyBar"></div>
+      </div>
+    </div>
 
-<img id="snap" src="baby-snap.png.jpg">
+    <div class="milestone" id="milestoneText"></div>
 
-<br>
+    <div id="gameArea">
+      <div id="snapWrap">
+        <img id="snap" src="baby-snap.png.jpg" alt="Baby Snap" />
+      </div>
+    </div>
 
-<button id="daily">Daily Reward</button>
-<button id="leader">Leaderboard</button>
+    <div class="buttons">
+      <button id="dailyBtn">Daily Reward</button>
+      <button id="leaderBtn">Leaderboard</button>
+    </div>
 
-<script>
+    <div class="footer-note">Tap fast. Build combo. Hit crits.</div>
+  </div>
 
-const tg = window.Telegram.WebApp
-tg.ready()
-tg.expand()
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
 
-let score = 0
-let energy = 100
+    let score = 0;
+    let energy = 100;
+    let dailyClaimed = false;
 
-const scoreEl = document.getElementById("score")
-const energyEl = document.getElementById("energy")
-const snap = document.getElementById("snap")
+    let streak = 0;
+    let comboMultiplier = 1;
+    let lastTapTime = 0;
+    let comboTimeout = null;
 
-snap.onclick = () => {
+    const scoreEl = document.getElementById("score");
+    const energyEl = document.getElementById("energy");
+    const energyBarEl = document.getElementById("energyBar");
+    const comboTextEl = document.getElementById("comboText");
+    const snapEl = document.getElementById("snap");
+    const snapWrapEl = document.getElementById("snapWrap");
+    const gameAreaEl = document.getElementById("gameArea");
+    const dailyBtn = document.getElementById("dailyBtn");
+    const leaderBtn = document.getElementById("leaderBtn");
+    const screenEl = document.getElementById("screen");
+    const milestoneTextEl = document.getElementById("milestoneText");
 
-if(energy <= 0) return
+    const milestones = [50, 100, 250, 500, 1000, 2500, 5000];
+    const hitMessages = [
+      "Baby Snap loves that.",
+      "Keep it going.",
+      "Tap streak rising.",
+      "Momentum building."
+    ];
 
-score += 1
-energy -= 1
+    function updateUI() {
+      scoreEl.textContent = score;
+      energyEl.textContent = energy;
+      energyBarEl.style.width = `${energy}%`;
+      comboTextEl.textContent = `Combo x${comboMultiplier} • Streak ${streak}`;
+    }
 
-scoreEl.innerText = "Score: " + score
-energyEl.innerText = "Energy: " + energy
+    function hapticLight() {
+      if (tg?.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred("light");
+      }
+    }
 
-}
+    function hapticMedium() {
+      if (tg?.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred("medium");
+      }
+    }
 
-setInterval(()=>{
+    function hapticSuccess() {
+      if (tg?.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred("success");
+      }
+    }
 
-if(energy < 100){
-energy += 1
-energyEl.innerText = "Energy: " + energy
-}
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
 
-},3000)
+    function showFloatText(text, x, y, type = "normal") {
+      const el = document.createElement("div");
+      el.className = `float-text ${
+        type === "crit" ? "float-crit" :
+        type === "bonus" ? "float-bonus" :
+        "float-normal"
+      }`;
+      el.textContent = text;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      gameAreaEl.appendChild(el);
 
-</script>
+      setTimeout(() => el.remove(), 850);
+    }
 
+    function flashMilestone(text) {
+      milestoneTextEl.textContent = text;
+      setTimeout(() => {
+        if (milestoneTextEl.textContent === text) {
+          milestoneTextEl.textContent = "";
+        }
+      }, 1400);
+    }
+
+    function triggerVisualTap(isCrit) {
+      snapEl.classList.add("tap");
+      snapWrapEl.classList.add("glow");
+
+      if (isCrit) {
+        snapEl.classList.add("crit");
+        screenEl.classList.add("shake");
+      }
+
+      setTimeout(() => {
+        snapEl.classList.remove("tap", "crit");
+        snapWrapEl.classList.remove("glow");
+        screenEl.classList.remove("shake");
+      }, 180);
+    }
+
+    function getComboMultiplier(currentStreak) {
+      if (currentStreak >= 40) return 5;
+      if (currentStreak >= 25) return 4;
+      if (currentStreak >= 15) return 3;
+      if (currentStreak >= 7) return 2;
+      return 1;
+    }
+
+    function resetComboSoon() {
+      clearTimeout(comboTimeout);
+      comboTimeout = setTimeout(() => {
+        streak = 0;
+        comboMultiplier = 1;
+        updateUI();
+      }, 1400);
+    }
+
+    function maybeMilestoneBonus() {
+      if (milestones.includes(score)) {
+        const bonus = 25;
+        score += bonus;
+        flashMilestone(`🔥 ${score - bonus} reached! +${bonus} bonus`);
+        hapticMedium();
+      }
+    }
+
+    function tapSnap(clientX, clientY) {
+      if (energy <= 0) return;
+
+      const now = Date.now();
+      const fastTap = now - lastTapTime < 650;
+      lastTapTime = now;
+
+      if (fastTap) {
+        streak += 1;
+      } else {
+        streak = 1;
+      }
+
+      comboMultiplier = getComboMultiplier(streak);
+
+      const critChance = Math.min(0.08 + streak * 0.005, 0.22);
+      const isCrit = Math.random() < critChance;
+
+      let points = comboMultiplier;
+      if (isCrit) points *= 3;
+
+      score += points;
+      energy -= 1;
+
+      const rect = gameAreaEl.getBoundingClientRect();
+      const x = clientX - rect.left + randomBetween(-8, 8);
+      const y = clientY - rect.top + randomBetween(-8, 8);
+
+      showFloatText(
+        isCrit ? `CRIT +${points}` : `+${points}`,
+        x,
+        y,
+        isCrit ? "crit" : "normal"
+      );
+
+      if (streak === 7) flashMilestone("⚡ Combo x2 unlocked");
+      if (streak === 15) flashMilestone("🚀 Combo x3 unlocked");
+      if (streak === 25) flashMilestone("💎 Combo x4 unlocked");
+      if (streak === 40) flashMilestone("👑 Combo x5 unlocked");
+
+      maybeMilestoneBonus();
+      triggerVisualTap(isCrit);
+
+      if (isCrit) {
+        hapticMedium();
+      } else {
+        hapticLight();
+      }
+
+      updateUI();
+      resetComboSoon();
+    }
+
+    snapEl.addEventListener("click", (e) => {
+      tapSnap(e.clientX, e.clientY);
+    });
+
+    snapEl.addEventListener("touchstart", (e) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      tapSnap(touch.clientX, touch.clientY);
+    }, { passive: true });
+
+    dailyBtn.addEventListener("click", () => {
+      if (dailyClaimed) return;
+
+      const bonus = 100;
+      score += bonus;
+      dailyClaimed = true;
+      dailyBtn.textContent = "Reward Claimed";
+      flashMilestone(`🎁 Daily bonus +${bonus}`);
+      hapticSuccess();
+      updateUI();
+    });
+
+    leaderBtn.addEventListener("click", () => {
+      alert(`Coming soon.\n\nYour current score: ${score}`);
+    });
+
+    setInterval(() => {
+      if (energy < 100) {
+        energy += 1;
+        updateUI();
+      }
+    }, 1800);
+
+    setInterval(() => {
+      if (!milestoneTextEl.textContent && score > 0 && Math.random() < 0.25) {
+        const msg = hitMessages[Math.floor(Math.random() * hitMessages.length)];
+        milestoneTextEl.textContent = msg;
+        setTimeout(() => {
+          if (milestoneTextEl.textContent === msg) {
+            milestoneTextEl.textContent = "";
+          }
+        }, 900);
+      }
+    }, 3500);
+
+    updateUI();
+  </script>
 </body>
 </html>
