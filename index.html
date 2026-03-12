@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Baby Snap Tap Game</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -11,96 +11,170 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    :root {
+      --bg1: #10204d;
+      --bg2: #07122d;
+      --bg3: #030914;
+      --card: rgba(255,255,255,0.08);
+      --card-border: rgba(255,255,255,0.08);
+      --cyan: #38bdf8;
+      --teal: #22d3ee;
+      --purple: #8b5cf6;
+      --gold: #fde047;
+      --green: #86efac;
+      --danger: #fb7185;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.75);
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #10204d 0%, #07122d 55%, #030914 100%);
-      color: white;
+      background: radial-gradient(circle at top, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+      color: var(--text);
       text-align: center;
       overflow-x: hidden;
       min-height: 100vh;
     }
 
+    body.crit-flash {
+      animation: critFlashBg 0.22s ease;
+    }
+
     .wrap {
-      max-width: 430px;
+      max-width: 440px;
       margin: 0 auto;
-      padding: 18px 16px 40px;
+      padding: 14px 14px 40px;
       position: relative;
     }
 
+    .hero {
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+
     h1 {
-      margin: 12px 0 8px;
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
+      margin: 6px 0 4px;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+    }
+
+    .sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
     }
 
     .topbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 14px 0 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0 10px;
     }
 
     .card {
-      flex: 1;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--card);
+      border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 12px 10px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      padding: 10px 8px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+      backdrop-filter: blur(4px);
     }
 
     .label {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-bottom: 4px;
+      font-size: 10px;
+      opacity: 0.82;
       text-transform: uppercase;
       letter-spacing: 0.8px;
+      margin-bottom: 4px;
     }
 
     .value {
-      font-size: 28px;
-      font-weight: 800;
+      font-size: 20px;
+      font-weight: 900;
     }
 
-    .combo-box {
-      margin: 12px 0 16px;
-      background: rgba(255,255,255,0.07);
-      border-radius: 16px;
+    .section {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
       padding: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
+      margin: 10px 0;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
     }
 
-    .combo-text {
-      font-size: 18px;
-      font-weight: 700;
+    .row-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      text-align: left;
       margin-bottom: 8px;
     }
 
     .bar {
       width: 100%;
       height: 12px;
-      background: rgba(255,255,255,0.12);
       border-radius: 999px;
       overflow: hidden;
+      background: rgba(255,255,255,0.12);
     }
 
     .bar-fill {
       height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #38bdf8, #22d3ee, #8b5cf6);
+      width: 0%;
       border-radius: 999px;
       transition: width 0.18s linear;
-      box-shadow: 0 0 14px rgba(56,189,248,0.6);
+      background: linear-gradient(90deg, var(--cyan), var(--teal), var(--purple));
+      box-shadow: 0 0 16px rgba(56,189,248,0.55);
+    }
+
+    .mini-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.12);
+      margin-top: 8px;
+    }
+
+    .mini-fill {
+      height: 100%;
+      width: 100%;
+      border-radius: 999px;
+      transition: width 0.1s linear;
+      background: linear-gradient(90deg, #f97316, #facc15);
+      box-shadow: 0 0 12px rgba(251,146,60,0.5);
+    }
+
+    .small-text {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: left;
+      margin-top: 8px;
+    }
+
+    .big-status {
+      min-height: 28px;
+      margin: 8px 0 2px;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 18px rgba(250,204,21,0.35);
     }
 
     #gameArea {
       position: relative;
       width: 100%;
       max-width: 320px;
-      margin: 22px auto 10px;
       min-height: 320px;
+      margin: 10px auto 8px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -110,8 +184,8 @@
       position: relative;
       display: inline-block;
       border-radius: 50%;
+      filter: drop-shadow(0 14px 30px rgba(0,0,0,0.28));
       transition: transform 0.08s ease;
-      filter: drop-shadow(0 10px 25px rgba(0,0,0,0.28));
     }
 
     #snapWrap.glow {
@@ -121,96 +195,276 @@
     #snap {
       width: 300px;
       max-width: 78vw;
+      display: block;
       user-select: none;
       -webkit-user-drag: none;
       cursor: pointer;
-      display: block;
+      transition: transform 0.08s ease;
     }
 
     #snap.tap {
-      transform: scale(0.93) rotate(-2deg);
+      transform: scale(0.92) rotate(-2deg);
     }
 
     #snap.crit {
-      animation: critFlash 0.25s ease;
-    }
-
-    .float-text {
-      position: absolute;
-      pointer-events: none;
-      font-weight: 900;
-      font-size: 28px;
-      text-shadow: 0 0 14px rgba(255,255,255,0.45);
-      animation: floatUp 0.85s ease-out forwards;
-      white-space: nowrap;
-    }
-
-    .float-normal {
-      color: #7dd3fc;
-    }
-
-    .float-crit {
-      color: #fde047;
-      font-size: 34px;
-      text-shadow: 0 0 16px rgba(253,224,71,0.9);
-    }
-
-    .float-bonus {
-      color: #86efac;
-      font-size: 30px;
-    }
-
-    .milestone {
-      margin: 14px auto 8px;
-      min-height: 28px;
-      font-size: 18px;
-      font-weight: 800;
-      color: #facc15;
-      text-shadow: 0 0 18px rgba(250,204,21,0.35);
+      animation: critSnap 0.24s ease;
     }
 
     .buttons {
       display: flex;
-      justify-content: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
-      margin-top: 16px;
+      justify-content: center;
+      margin-top: 12px;
     }
 
     button {
       border: none;
       border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 16px;
-      font-weight: 800;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 900;
       cursor: pointer;
-      background: linear-gradient(180deg, #ffffff, #dbeafe);
       color: #0f172a;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+      background: linear-gradient(180deg, #ffffff, #dbeafe);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.22);
     }
 
     button:active {
       transform: scale(0.97);
     }
 
-    .footer-note {
-      margin-top: 14px;
-      font-size: 13px;
-      opacity: 0.7;
+    .btn-alt {
+      background: linear-gradient(180deg, #c4b5fd, #a78bfa);
+      color: #190a40;
     }
 
-    .shake {
-      animation: shake 0.18s linear;
+    .btn-gold {
+      background: linear-gradient(180deg, #fde68a, #facc15);
+      color: #3b2f00;
+    }
+
+    .quests {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quest {
+      text-align: left;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .quest-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .quest-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    .quest-reward {
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .shop-grid {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .shop-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .shop-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .shop-name {
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .shop-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .tiny-btn {
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .float-text {
+      position: absolute;
+      pointer-events: none;
+      font-weight: 900;
+      white-space: nowrap;
+      animation: floatUp 0.85s ease-out forwards;
+      text-shadow: 0 0 16px rgba(255,255,255,0.35);
+    }
+
+    .float-normal {
+      font-size: 28px;
+      color: var(--cyan);
+    }
+
+    .float-crit {
+      font-size: 34px;
+      color: var(--gold);
+      text-shadow: 0 0 18px rgba(253,224,71,0.9);
+    }
+
+    .float-coin {
+      font-size: 24px;
+      color: var(--green);
+    }
+
+    .float-level {
+      font-size: 32px;
+      color: #c4b5fd;
+      text-shadow: 0 0 20px rgba(196,181,253,0.8);
+    }
+
+    .coin-burst {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fde68a 0%, #f59e0b 80%);
+      pointer-events: none;
+      animation: coinBurst 0.8s ease-out forwards;
+      box-shadow: 0 0 10px rgba(245,158,11,0.7);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 9, 20, 0.72);
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 20px 12px;
+      z-index: 999;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 440px;
+      background: #0d1638;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px 20px 14px 14px;
+      padding: 16px 14px 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      max-height: 75vh;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .close-btn {
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .leader-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .leader-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+
+    .leader-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .leader-rank {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .leader-name {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .leader-score {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--gold);
     }
 
     @keyframes floatUp {
       0% {
         opacity: 1;
-        transform: translateY(0) scale(0.9);
+        transform: translateY(0) scale(0.92);
       }
       100% {
         opacity: 0;
-        transform: translateY(-72px) scale(1.25);
+        transform: translateY(-72px) scale(1.22);
       }
     }
 
@@ -220,24 +474,36 @@
       100% { filter: drop-shadow(0 0 0 rgba(56,189,248,0)); }
     }
 
-    @keyframes critFlash {
+    @keyframes critSnap {
       0% { transform: scale(1); }
       40% { transform: scale(1.08) rotate(2deg); }
       100% { transform: scale(1); }
     }
 
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      50% { transform: translateX(4px); }
-      75% { transform: translateX(-3px); }
-      100% { transform: translateX(0); }
+    @keyframes critFlashBg {
+      0% { background-color: rgba(255,255,255,0); }
+      50% { background-color: rgba(253,224,71,0.08); }
+      100% { background-color: rgba(255,255,255,0); }
+    }
+
+    @keyframes coinBurst {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.5);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap" id="screen">
-    <h1>Baby Snap Tap Game</h1>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Baby Snap Tap Game</h1>
+      <div class="sub">Tap fast. Build combo. Chase rank. Claim rewards.</div>
+    </div>
 
     <div class="topbar">
       <div class="card">
@@ -245,264 +511,658 @@
         <div class="value" id="score">0</div>
       </div>
       <div class="card">
+        <div class="label">Coins</div>
+        <div class="value" id="coins">0</div>
+      </div>
+      <div class="card">
         <div class="label">Energy</div>
         <div class="value" id="energy">100</div>
       </div>
-    </div>
-
-    <div class="combo-box">
-      <div class="combo-text" id="comboText">Combo x1 • Streak 0</div>
-      <div class="bar">
-        <div class="bar-fill" id="energyBar"></div>
+      <div class="card">
+        <div class="label">Level</div>
+        <div class="value" id="level">1</div>
       </div>
     </div>
 
-    <div class="milestone" id="milestoneText"></div>
+    <div class="section">
+      <div class="row-between">
+        <div class="section-title">XP Progress</div>
+        <div id="xpText" style="font-size:12px;color:var(--muted);font-weight:700;">0 / 100 XP</div>
+      </div>
+      <div class="bar">
+        <div class="bar-fill" id="xpBar"></div>
+      </div>
+      <div class="small-text" id="levelMessage">Tap to level up Baby Snap.</div>
+    </div>
+
+    <div class="section">
+      <div class="row-between">
+        <div class="section-title">Combo Power</div>
+        <div id="comboText" style="font-size:12px;color:var(--muted);font-weight:700;">Combo x1 • Streak 0</div>
+      </div>
+      <div class="bar">
+        <div class="bar-fill" id="energyBar" style="width:100%;"></div>
+      </div>
+      <div class="mini-bar">
+        <div class="mini-fill" id="comboTimerBar"></div>
+      </div>
+      <div class="small-text" id="dailyInfo">Daily streak: 1 • Claim ready</div>
+      <div class="big-status" id="statusText"></div>
+    </div>
 
     <div id="gameArea">
       <div id="snapWrap">
-        <img id="snap" src="baby-snap.png.jpg" alt="Baby Snap" />
+        <img id="snap" src="baby-snap.png.PNG" alt="Baby Snap" />
       </div>
     </div>
 
     <div class="buttons">
-      <button id="dailyBtn">Daily Reward</button>
+      <button id="dailyBtn" class="btn-gold">Daily Reward</button>
       <button id="leaderBtn">Leaderboard</button>
+      <button id="shopBtn" class="btn-alt">Shop</button>
     </div>
 
-    <div class="footer-note">Tap fast. Build combo. Hit crits.</div>
+    <div class="section">
+      <div class="section-title">Daily Quests</div>
+      <div class="quests" id="quests"></div>
+    </div>
+
+    <div class="footer-note">Baby Snap gets stronger with every session.</div>
+  </div>
+
+  <div class="modal-backdrop" id="leaderModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">🏆 Global Leaderboard</div>
+        <button class="close-btn" data-close="leaderModal">✕</button>
+      </div>
+      <div class="leader-list" id="leaderList"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="shopModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">🛒 Baby Snap Shop</div>
+        <button class="close-btn" data-close="shopModal">✕</button>
+      </div>
+
+      <div class="shop-grid">
+        <div class="shop-item">
+          <div class="shop-top">
+            <div class="shop-name">Tap Power</div>
+            <button class="tiny-btn" data-buy="tap">Buy</button>
+          </div>
+          <div class="shop-meta" id="tapMeta">Level 1 • Cost 25</div>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-top">
+            <div class="shop-name">Crit Boost</div>
+            <button class="tiny-btn" data-buy="crit">Buy</button>
+          </div>
+          <div class="shop-meta" id="critMeta">Level 1 • Cost 40</div>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-top">
+            <div class="shop-name">Auto Tapper</div>
+            <button class="tiny-btn" data-buy="auto">Buy</button>
+          </div>
+          <div class="shop-meta" id="autoMeta">Level 0 • Cost 100</div>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-top">
+            <div class="shop-name">Golden Lagoon Background</div>
+            <button class="tiny-btn" data-buy="bg">Buy</button>
+          </div>
+          <div class="shop-meta">Cosmetic • Cost 200</div>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-top">
+            <div class="shop-name">Combo King Title</div>
+            <button class="tiny-btn" data-buy="title">Buy</button>
+          </div>
+          <div class="shop-meta">Prestige title • Cost 300</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
+    const API_BASE = "https://baby-snap-game-api.onrender.com";
+    const SAVE_KEY = "babySnapPremium_v1";
+
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
     }
 
-    let score = 0;
-    let energy = 100;
-    let dailyClaimed = false;
+    let game = {
+      score: 0,
+      coins: 0,
+      energy: 100,
+      level: 1,
+      xp: 0,
+      dailyStreak: 1,
+      dailyClaimed: false,
+      nextClaimAt: null,
+      streak: 0,
+      comboMultiplier: 1,
+      tapPower: 1,
+      critLevel: 1,
+      autoLevel: 0,
+      questsClaimed: {
+        taps25: false,
+        coins100: false,
+        score500: false
+      },
+      totalTaps: 0
+    };
 
-    let streak = 0;
-    let comboMultiplier = 1;
     let lastTapTime = 0;
-    let comboTimeout = null;
+    let comboResetTimeout = null;
+    let comboVisualInterval = null;
+    let autoTapInterval = null;
 
     const scoreEl = document.getElementById("score");
+    const coinsEl = document.getElementById("coins");
     const energyEl = document.getElementById("energy");
+    const levelEl = document.getElementById("level");
+    const xpTextEl = document.getElementById("xpText");
+    const xpBarEl = document.getElementById("xpBar");
     const energyBarEl = document.getElementById("energyBar");
+    const comboTimerBarEl = document.getElementById("comboTimerBar");
     const comboTextEl = document.getElementById("comboText");
+    const levelMessageEl = document.getElementById("levelMessage");
+    const dailyInfoEl = document.getElementById("dailyInfo");
+    const statusTextEl = document.getElementById("statusText");
     const snapEl = document.getElementById("snap");
     const snapWrapEl = document.getElementById("snapWrap");
     const gameAreaEl = document.getElementById("gameArea");
     const dailyBtn = document.getElementById("dailyBtn");
     const leaderBtn = document.getElementById("leaderBtn");
-    const screenEl = document.getElementById("screen");
-    const milestoneTextEl = document.getElementById("milestoneText");
+    const shopBtn = document.getElementById("shopBtn");
+    const leaderModal = document.getElementById("leaderModal");
+    const shopModal = document.getElementById("shopModal");
+    const leaderListEl = document.getElementById("leaderList");
+    const questsEl = document.getElementById("quests");
+    const tapMetaEl = document.getElementById("tapMeta");
+    const critMetaEl = document.getElementById("critMeta");
+    const autoMetaEl = document.getElementById("autoMeta");
 
-    const milestones = [50, 100, 250, 500, 1000, 2500, 5000];
-    const hitMessages = [
-      "Baby Snap loves that.",
-      "Keep it going.",
-      "Tap streak rising.",
-      "Momentum building."
+    const quests = [
+      { key: "taps25", title: "Tap 25 times", desc: "Build momentum with 25 taps.", reward: 40 },
+      { key: "coins100", title: "Reach 100 coins", desc: "Collect 100 coins in one run.", reward: 60 },
+      { key: "score500", title: "Reach 500 score", desc: "Push Baby Snap to 500 score.", reward: 100 }
     ];
 
+    function saveGame() {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+    }
+
+    function loadGame() {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        game = { ...game, ...parsed };
+      } catch (e) {
+        console.log("save load failed");
+      }
+    }
+
+    function xpNeededForLevel(level) {
+      return 100 + (level - 1) * 60;
+    }
+
+    function tapCost() {
+      return Math.floor(25 * Math.pow(1.7, game.tapPower - 1));
+    }
+
+    function critCost() {
+      return Math.floor(40 * Math.pow(1.75, game.critLevel - 1));
+    }
+
+    function autoCost() {
+      return Math.floor(100 * Math.pow(2, game.autoLevel));
+    }
+
+    function critChance() {
+      return Math.min(0.10 + (game.critLevel - 1) * 0.03 + game.streak * 0.003, 0.35);
+    }
+
     function updateUI() {
-      scoreEl.textContent = score;
-      energyEl.textContent = energy;
-      energyBarEl.style.width = `${energy}%`;
-      comboTextEl.textContent = `Combo x${comboMultiplier} • Streak ${streak}`;
+      scoreEl.textContent = Math.floor(game.score);
+      coinsEl.textContent = Math.floor(game.coins);
+      energyEl.textContent = game.energy;
+      levelEl.textContent = game.level;
+
+      const xpNeed = xpNeededForLevel(game.level);
+      xpTextEl.textContent = `${game.xp} / ${xpNeed} XP`;
+      xpBarEl.style.width = `${Math.min(100, (game.xp / xpNeed) * 100)}%`;
+
+      energyBarEl.style.width = `${game.energy}%`;
+      comboTextEl.textContent = `Combo x${game.comboMultiplier} • Streak ${game.streak}`;
+
+      dailyBtn.textContent = game.dailyClaimed ? "Reward Claimed" : "Daily Reward";
+      tapMetaEl.textContent = `Level ${game.tapPower} • Cost ${tapCost()}`;
+      critMetaEl.textContent = `Level ${game.critLevel} • Cost ${critCost()}`;
+      autoMetaEl.textContent = `Level ${game.autoLevel} • Cost ${autoCost()}`;
+
+      updateDailyInfo();
+      renderQuests();
     }
 
-    function hapticLight() {
-      if (tg?.HapticFeedback) {
-        tg.HapticFeedback.impactOccurred("light");
+    function updateDailyInfo() {
+      if (!game.dailyClaimed || !game.nextClaimAt) {
+        dailyInfoEl.textContent = `Daily streak: ${game.dailyStreak} • Claim ready`;
+        return;
       }
+
+      const diff = Math.max(0, new Date(game.nextClaimAt).getTime() - Date.now());
+      const hrs = Math.floor(diff / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      dailyInfoEl.textContent = `Daily streak: ${game.dailyStreak} • Next claim in ${hrs}h ${mins}m`;
     }
 
-    function hapticMedium() {
-      if (tg?.HapticFeedback) {
-        tg.HapticFeedback.impactOccurred("medium");
-      }
+    function flashStatus(text) {
+      statusTextEl.textContent = text;
+      setTimeout(() => {
+        if (statusTextEl.textContent === text) statusTextEl.textContent = "";
+      }, 1600);
     }
 
-    function hapticSuccess() {
-      if (tg?.HapticFeedback) {
-        tg.HapticFeedback.notificationOccurred("success");
-      }
-    }
-
-    function randomBetween(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
-    function showFloatText(text, x, y, type = "normal") {
+    function showFloatText(text, x, y, cls = "float-normal") {
       const el = document.createElement("div");
-      el.className = `float-text ${
-        type === "crit" ? "float-crit" :
-        type === "bonus" ? "float-bonus" :
-        "float-normal"
-      }`;
+      el.className = `float-text ${cls}`;
       el.textContent = text;
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
       gameAreaEl.appendChild(el);
-
       setTimeout(() => el.remove(), 850);
     }
 
-    function flashMilestone(text) {
-      milestoneTextEl.textContent = text;
-      setTimeout(() => {
-        if (milestoneTextEl.textContent === text) {
-          milestoneTextEl.textContent = "";
-        }
-      }, 1400);
+    function makeCoinBurst(x, y) {
+      for (let i = 0; i < 5; i++) {
+        const coin = document.createElement("div");
+        coin.className = "coin-burst";
+        coin.style.left = `${x}px`;
+        coin.style.top = `${y}px`;
+        coin.style.setProperty("--dx", `${(Math.random() * 90 - 45)}px`);
+        coin.style.setProperty("--dy", `${(-40 - Math.random() * 70)}px`);
+        gameAreaEl.appendChild(coin);
+        setTimeout(() => coin.remove(), 800);
+      }
     }
 
-    function triggerVisualTap(isCrit) {
-      snapEl.classList.add("tap");
-      snapWrapEl.classList.add("glow");
-
-      if (isCrit) {
-        snapEl.classList.add("crit");
-        screenEl.classList.add("shake");
+    function maybeLevelUp() {
+      let leveled = false;
+      while (game.xp >= xpNeededForLevel(game.level)) {
+        game.xp -= xpNeededForLevel(game.level);
+        game.level += 1;
+        game.coins += 50;
+        leveled = true;
       }
 
-      setTimeout(() => {
-        snapEl.classList.remove("tap", "crit");
-        snapWrapEl.classList.remove("glow");
-        screenEl.classList.remove("shake");
-      }, 180);
+      if (leveled) {
+        showFloatText(`LEVEL ${game.level}!`, gameAreaEl.clientWidth / 2 - 50, 80, "float-level");
+        flashStatus(`🚀 Baby Snap reached Level ${game.level}`);
+        levelMessageEl.textContent = `Level ${game.level} unlocked. Keep climbing.`;
+      }
     }
 
-    function getComboMultiplier(currentStreak) {
-      if (currentStreak >= 40) return 5;
-      if (currentStreak >= 25) return 4;
-      if (currentStreak >= 15) return 3;
-      if (currentStreak >= 7) return 2;
+    function getComboMultiplier(streak) {
+      if (streak >= 40) return 5;
+      if (streak >= 25) return 4;
+      if (streak >= 15) return 3;
+      if (streak >= 7) return 2;
       return 1;
     }
 
-    function resetComboSoon() {
-      clearTimeout(comboTimeout);
-      comboTimeout = setTimeout(() => {
-        streak = 0;
-        comboMultiplier = 1;
+    function startComboVisual() {
+      clearInterval(comboVisualInterval);
+      let width = 100;
+      comboTimerBarEl.style.width = "100%";
+
+      comboVisualInterval = setInterval(() => {
+        width -= 7.5;
+        comboTimerBarEl.style.width = `${Math.max(0, width)}%`;
+        if (width <= 0) clearInterval(comboVisualInterval);
+      }, 100);
+    }
+
+    function scheduleComboReset() {
+      clearTimeout(comboResetTimeout);
+      startComboVisual();
+
+      comboResetTimeout = setTimeout(() => {
+        game.streak = 0;
+        game.comboMultiplier = 1;
+        comboTimerBarEl.style.width = "0%";
         updateUI();
+        saveGame();
       }, 1400);
     }
 
-    function maybeMilestoneBonus() {
-      if (milestones.includes(score)) {
-        const bonus = 25;
-        score += bonus;
-        flashMilestone(`🔥 ${score - bonus} reached! +${bonus} bonus`);
-        hapticMedium();
+    function updateQuestsProgress() {
+      if (game.totalTaps >= 25 && !game.questsClaimed.taps25) {
+        flashStatus("✅ Quest ready: Tap 25 times");
+      }
+      if (game.coins >= 100 && !game.questsClaimed.coins100) {
+        flashStatus("💰 Quest ready: Reach 100 coins");
+      }
+      if (game.score >= 500 && !game.questsClaimed.score500) {
+        flashStatus("🔥 Quest ready: Reach 500 score");
       }
     }
 
-    function tapSnap(clientX, clientY) {
-      if (energy <= 0) return;
+    function claimQuest(key) {
+      if (key === "taps25" && game.totalTaps >= 25 && !game.questsClaimed[key]) {
+        game.coins += 40;
+        game.questsClaimed[key] = true;
+        flashStatus("🎉 Quest claimed: +40 coins");
+      }
+      if (key === "coins100" && game.coins >= 100 && !game.questsClaimed[key]) {
+        game.coins += 60;
+        game.questsClaimed[key] = true;
+        flashStatus("🎉 Quest claimed: +60 coins");
+      }
+      if (key === "score500" && game.score >= 500 && !game.questsClaimed[key]) {
+        game.coins += 100;
+        game.questsClaimed[key] = true;
+        flashStatus("🎉 Quest claimed: +100 coins");
+      }
+      updateUI();
+      saveGame();
+    }
+
+    function renderQuests() {
+      questsEl.innerHTML = "";
+      quests.forEach(q => {
+        let done = false;
+        let progressText = "";
+
+        if (q.key === "taps25") {
+          done = game.totalTaps >= 25;
+          progressText = `${Math.min(game.totalTaps, 25)} / 25`;
+        }
+        if (q.key === "coins100") {
+          done = game.coins >= 100;
+          progressText = `${Math.min(game.coins, 100)} / 100`;
+        }
+        if (q.key === "score500") {
+          done = game.score >= 500;
+          progressText = `${Math.min(game.score, 500)} / 500`;
+        }
+
+        const claimed = game.questsClaimed[q.key];
+
+        const el = document.createElement("div");
+        el.className = "quest";
+        el.innerHTML = `
+          <div class="quest-head">
+            <span>${q.title}</span>
+            <span>${claimed ? "Claimed" : progressText}</span>
+          </div>
+          <div class="quest-desc">${q.desc}</div>
+          <div class="quest-reward">Reward: +${q.reward} coins</div>
+          ${done && !claimed ? `<div style="margin-top:8px;"><button class="tiny-btn" data-quest="${q.key}">Claim</button></div>` : ""}
+        `;
+        questsEl.appendChild(el);
+      });
+
+      questsEl.querySelectorAll("[data-quest]").forEach(btn => {
+        btn.addEventListener("click", () => claimQuest(btn.dataset.quest));
+      });
+    }
+
+    async function submitScore() {
+      try {
+        await fetch(`${API_BASE}/submit-score`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: "BabySnapPlayer",
+            score: Math.floor(game.score)
+          })
+        });
+      } catch (e) {
+        console.log("submit failed");
+      }
+    }
+
+    async function openLeaderboard() {
+      leaderModal.classList.add("show");
+      leaderListEl.innerHTML = `<div style="color:var(--muted);">Loading...</div>`;
+      try {
+        const res = await fetch(`${API_BASE}/leaderboard`);
+        const data = await res.json();
+
+        leaderListEl.innerHTML = "";
+        data.forEach(player => {
+          const row = document.createElement("div");
+          row.className = "leader-item";
+          row.innerHTML = `
+            <div class="leader-left">
+              <div class="leader-rank">Rank #${player.rank}</div>
+              <div class="leader-name">${player.username}</div>
+            </div>
+            <div class="leader-score">${player.score}</div>
+          `;
+          leaderListEl.appendChild(row);
+        });
+      } catch (e) {
+        leaderListEl.innerHTML = `<div style="color:#fda4af;">Could not load leaderboard.</div>`;
+      }
+    }
+
+    async function claimDailyReward() {
+      if (game.dailyClaimed) {
+        flashStatus("Daily reward already claimed");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/claim/daily`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          game.coins += data.reward.coins || 0;
+          game.energy = Math.min(100, game.energy + (data.reward.energy || 0));
+          game.dailyClaimed = true;
+          game.nextClaimAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+          game.dailyStreak += 1;
+
+          flashStatus(`🎁 +${data.reward.coins} coins • +${data.reward.energy} energy`);
+          saveGame();
+          updateUI();
+        }
+      } catch (e) {
+        flashStatus("Daily reward failed");
+      }
+    }
+
+    function handleTap(clientX, clientY) {
+      if (game.energy <= 0) {
+        flashStatus("Out of energy");
+        return;
+      }
 
       const now = Date.now();
       const fastTap = now - lastTapTime < 650;
       lastTapTime = now;
 
-      if (fastTap) {
-        streak += 1;
-      } else {
-        streak = 1;
-      }
+      game.streak = fastTap ? game.streak + 1 : 1;
+      game.comboMultiplier = getComboMultiplier(game.streak);
 
-      comboMultiplier = getComboMultiplier(streak);
+      const crit = Math.random() < critChance();
+      let points = game.tapPower * game.comboMultiplier;
+      if (crit) points *= 3;
 
-      const critChance = Math.min(0.08 + streak * 0.005, 0.22);
-      const isCrit = Math.random() < critChance;
-
-      let points = comboMultiplier;
-      if (isCrit) points *= 3;
-
-      score += points;
-      energy -= 1;
+      game.score += points;
+      game.coins += Math.max(1, Math.floor(points / 2));
+      game.xp += Math.max(1, points);
+      game.energy -= 1;
+      game.totalTaps += 1;
 
       const rect = gameAreaEl.getBoundingClientRect();
-      const x = clientX - rect.left + randomBetween(-8, 8);
-      const y = clientY - rect.top + randomBetween(-8, 8);
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
 
       showFloatText(
-        isCrit ? `CRIT +${points}` : `+${points}`,
+        crit ? `CRIT +${points}` : `+${points}`,
         x,
         y,
-        isCrit ? "crit" : "normal"
+        crit ? "float-crit" : "float-normal"
       );
+      showFloatText(`+${Math.max(1, Math.floor(points / 2))} coins`, x + 12, y + 22, "float-coin");
+      makeCoinBurst(x, y);
 
-      if (streak === 7) flashMilestone("⚡ Combo x2 unlocked");
-      if (streak === 15) flashMilestone("🚀 Combo x3 unlocked");
-      if (streak === 25) flashMilestone("💎 Combo x4 unlocked");
-      if (streak === 40) flashMilestone("👑 Combo x5 unlocked");
+      snapWrapEl.classList.add("glow");
+      snapEl.classList.add("tap");
+      if (crit) {
+        snapEl.classList.add("crit");
+        document.body.classList.add("crit-flash");
+      }
 
-      maybeMilestoneBonus();
-      triggerVisualTap(isCrit);
+      setTimeout(() => {
+        snapWrapEl.classList.remove("glow");
+        snapEl.classList.remove("tap", "crit");
+        document.body.classList.remove("crit-flash");
+      }, 180);
 
-      if (isCrit) {
-        hapticMedium();
-      } else {
-        hapticLight();
+      maybeLevelUp();
+      updateQuestsProgress();
+      updateUI();
+      submitScore();
+      saveGame();
+      scheduleComboReset();
+
+      if (game.streak === 7) flashStatus("⚡ Combo x2 unlocked");
+      if (game.streak === 15) flashStatus("🚀 Combo x3 unlocked");
+      if (game.streak === 25) flashStatus("💎 Combo x4 unlocked");
+      if (game.streak === 40) flashStatus("👑 Combo x5 unlocked");
+    }
+
+    function buyItem(type) {
+      if (type === "tap") {
+        const cost = tapCost();
+        if (game.coins < cost) return flashStatus("Not enough coins");
+        game.coins -= cost;
+        game.tapPower += 1;
+        flashStatus(`💪 Tap Power Lv ${game.tapPower}`);
+      }
+
+      if (type === "crit") {
+        const cost = critCost();
+        if (game.coins < cost) return flashStatus("Not enough coins");
+        game.coins -= cost;
+        game.critLevel += 1;
+        flashStatus(`🎯 Crit Boost Lv ${game.critLevel}`);
+      }
+
+      if (type === "auto") {
+        const cost = autoCost();
+        if (game.coins < cost) return flashStatus("Not enough coins");
+        game.coins -= cost;
+        game.autoLevel += 1;
+        flashStatus(`🤖 Auto Tapper Lv ${game.autoLevel}`);
+        restartAutoTap();
+      }
+
+      if (type === "bg") {
+        if (game.coins < 200) return flashStatus("Not enough coins");
+        game.coins -= 200;
+        document.body.style.background = "radial-gradient(circle at top, #184e77 0%, #1e6091 45%, #012a4a 100%)";
+        flashStatus("🌊 Background unlocked");
+      }
+
+      if (type === "title") {
+        if (game.coins < 300) return flashStatus("Not enough coins");
+        game.coins -= 300;
+        levelMessageEl.textContent = "Title equipped: Combo King";
+        flashStatus("👑 Title unlocked: Combo King");
       }
 
       updateUI();
-      resetComboSoon();
+      saveGame();
+    }
+
+    function restartAutoTap() {
+      clearInterval(autoTapInterval);
+      autoTapInterval = setInterval(() => {
+        if (game.autoLevel > 0) {
+          const gain = game.autoLevel;
+          game.score += gain;
+          game.coins += gain;
+          game.xp += gain;
+          maybeLevelUp();
+          updateUI();
+          saveGame();
+        }
+      }, 2500);
+    }
+
+    function checkDailyReset() {
+      if (!game.nextClaimAt) return;
+      if (Date.now() >= new Date(game.nextClaimAt).getTime()) {
+        game.dailyClaimed = false;
+        game.nextClaimAt = null;
+      }
     }
 
     snapEl.addEventListener("click", (e) => {
-      tapSnap(e.clientX, e.clientY);
+      handleTap(e.clientX, e.clientY);
     });
 
     snapEl.addEventListener("touchstart", (e) => {
       const touch = e.touches[0];
       if (!touch) return;
-      tapSnap(touch.clientX, touch.clientY);
+      handleTap(touch.clientX, touch.clientY);
     }, { passive: true });
 
-    dailyBtn.addEventListener("click", () => {
-      if (dailyClaimed) return;
+    dailyBtn.addEventListener("click", claimDailyReward);
+    leaderBtn.addEventListener("click", openLeaderboard);
+    shopBtn.addEventListener("click", () => shopModal.classList.add("show"));
 
-      const bonus = 100;
-      score += bonus;
-      dailyClaimed = true;
-      dailyBtn.textContent = "Reward Claimed";
-      flashMilestone(`🎁 Daily bonus +${bonus}`);
-      hapticSuccess();
-      updateUI();
+    document.querySelectorAll("[data-close]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.getElementById(btn.dataset.close).classList.remove("show");
+      });
     });
 
-    leaderBtn.addEventListener("click", () => {
-      alert(`Coming soon.\n\nYour current score: ${score}`);
+    document.querySelectorAll("[data-buy]").forEach(btn => {
+      btn.addEventListener("click", () => buyItem(btn.dataset.buy));
+    });
+
+    [leaderModal, shopModal].forEach(modal => {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.remove("show");
+      });
     });
 
     setInterval(() => {
-      if (energy < 100) {
-        energy += 1;
+      if (game.energy < 100) {
+        game.energy += 1;
         updateUI();
+        saveGame();
       }
-    }, 1800);
+      checkDailyReset();
+      updateDailyInfo();
+    }, 2000);
 
-    setInterval(() => {
-      if (!milestoneTextEl.textContent && score > 0 && Math.random() < 0.25) {
-        const msg = hitMessages[Math.floor(Math.random() * hitMessages.length)];
-        milestoneTextEl.textContent = msg;
-        setTimeout(() => {
-          if (milestoneTextEl.textContent === msg) {
-            milestoneTextEl.textContent = "";
-          }
-        }, 900);
-      }
-    }, 3500);
-
+    loadGame();
+    checkDailyReset();
     updateUI();
+    restartAutoTap();
   </script>
 </body>
 </html>
