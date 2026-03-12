@@ -552,7 +552,7 @@
 
     <div id="gameArea">
       <div id="snapWrap">
-        <img id="snap" src="baby-snap.png.jpg" alt="Baby Snap" />
+        <img id="snap" src="baby-snap.png.PNG" alt="Baby Snap" />
       </div>
     </div>
 
@@ -922,11 +922,20 @@
 
     async function submitScore() {
       try {
+        let username = "Guest";
+
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+          username =
+            tg.initDataUnsafe.user.username ||
+            tg.initDataUnsafe.user.first_name ||
+            "Player";
+        }
+
         await fetch(`${API_BASE}/submit-score`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: "BabySnapPlayer",
+            username: username,
             score: Math.floor(game.score)
           })
         });
